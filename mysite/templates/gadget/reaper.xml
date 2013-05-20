@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module><ModulePrefs title="Redwood Systems" height="1000">
+<Require feature="dynamic-height"/>
+<Require feature="google.calendar-0.5" />
+</ModulePrefs>
+<Content type="html">
+<![CDATA[<!doctype html>
+{% include "gadget/test1.html" %}
+]]></Content>
+</Module>

@@ -1,0 +1,60 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css" />{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+
+    
+        <table class="table table-bordered table-striped" summary="Models available in the Reaper application.">
+            <tbody><tr>
+                <th  class="title">Room Reservations Manager</th>
+            </tr>
+        
+            <tr>
+            
+                <th scope="row"><a href="/admin/reaper/reaperconfig/">Configuration</a></th>
+            
+            </tr>
+            
+            <tr>
+            
+                <th scope="row"><a href="/admin/reaper/roomconfig/">Room Setup</a></th>
+            
+            </tr>
+        
+            <tr>
+            
+                <th scope="row"><a href="/admin/reaper/reaperlog/">Room Cancellation Log</a></th>
+            
+            </tr>
+        
+        
+        </tbody></table>
+        
+        <table class="table table-bordered table-striped" summary="Models available in the Auth application.">
+            <tbody><tr>
+                <th  class="title">Authentication</th>
+            </tr>
+        
+            <tr>
+            
+                <th scope="row"><a href="/admin/auth/user/">Users</a></th>
+            
+            </tr>
+        
+        </tbody></table>
+    
+</div>
+
+
+{% endblock %}
+

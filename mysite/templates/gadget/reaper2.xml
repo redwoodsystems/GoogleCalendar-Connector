@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="Reservations"
+               directory_title="Redwood Systems"
+               description="Official gadget for managing room reservations using the Redwood Systems Director"
+               author="Redwood Systems"
+               author_email="vivek@cloudindra.com"
+               author_affiliation="Redwood Systems Inc."
+               author_location="Fremont, CA, USA"
+               title_url="http://www.redwoodsystems.com"
+               category="communication"
+               category2="tools"
+               height="1000">
+      <Require feature="dynamic-height"/>
+      <Require feature="google.calendar-0.5" />
+  </ModulePrefs>
+<Content type="html">
+<![CDATA[<!doctype html>
+{% include "gadget/test3.html" %}
+]]></Content>
+</Module>

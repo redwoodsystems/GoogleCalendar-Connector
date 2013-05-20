@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Room Reservations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Vivek Phalak">
+
+    <!-- Le styles -->
+    <link href="{{t_static_host_url}}/static/css/bootstrap-custom.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 70px; /* 60px to make the container go all the way to the bottom of the topbar */
+        max-width:160px;
+	    /* background-color:#F6F6F6; */
+	    background-color:#FFFFFF;
+	    font-size:11px;
+      }
+
+	  .main {
+	    max-width:160px;	
+	   }
+	  .navbar {
+	    max-width:160px;
+		height: 70px;
+		/* background-color:#F6F6F6; */
+	    background-color:#FFFFFF;
+		margin-left:10px;	
+	    margin-right:10px;
+	   }
+	  .container {
+	    max-width:160px;
+	    padding-left:0px;	
+	    padding-right:0px;
+	   }
+	
+	   .well{
+		 -webkit-border-radius:6px; 
+		 border-radius:6px;
+		 /* margin-bottom:10px; */
+		 margin-bottom:6px;
+		 padding-top:4px;
+		 padding-bottom:4px;
+		 padding-left:10px;
+		 padding-right:10px;
+		 margin-left:4px;
+		 margin-right:4px;
+	    }
+	    .well hr {
+			height: 1px;
+			    border: 0; border-top: 1px solid #C5D8D9;
+			    margin: 2px 0; padding: 0;
+		}
+		
+		
+		.well-green {
+			background-color:#DDF1DB;
+			color: #3A894D;
+		}
+		
+		.well-green hr {
+			border-top: 1px solid #3A894D;
+		}
+
+		.well-black {
+			background-color:#DBDBDB;
+			color: #454545;
+		}
+		
+		.well-black hr {
+			border-top: 1px solid #454545;
+		}
+
+		.well-red {
+			background-color:#F3DEDF;
+			color: #BE4948;
+		}
+		
+		.well-red hr {
+			border-top: 1px solid #BE4948;
+		}
+
+	
+	   .filter-div{
+	    height:20px;
+	    padding-top:4px;	
+		padding-bottom:2px;
+	   }
+	
+		.room-data-left{
+			align:left;
+		}
+
+		.room-data-right{
+			align:right;
+			float:right;
+			font-weight: bold;
+		}
+
+		.meet-now{
+			text-align: center;
+			margin-left:36px;
+		}
+		
+		.room-title{
+			font-weight: bold;
+			text-transform:uppercase;
+		}
+		
+		.room-data-row{
+			margin-top: 6px;
+			margin-bottom: 6px;
+		}
+		
+		.room-details{
+		}
+		
+		
+		/* all this for sticky footer */
+		
+		html, body, .container, .content {
+ 		   height: 100%;
+		}
+		
+		.container, .content {
+    		position: relative;
+		}
+
+		.proper-content {
+		    padding-top: 40px; /* >= navbar height */
+		}
+		
+		.wrapper {
+		    min-height: 100%;
+		    height: auto !important;
+		    height: 100%;
+		    margin: 0 auto -50px; /* same as the footer */
+		}
+		
+		.push {
+		    height: 50px; /* same as the footer */
+		}
+		
+		.footer-wrapper {
+    		position: relative;
+    		height: 50px;
+		}
+		
+		.pagination {
+ 		 	 height: 14px;
+  			 margin: 2px 5px;
+		}
+		
+		.pagination a {
+ 			float: left;
+  			padding: 0 4px;
+  			line-height: 12px;
+  			text-decoration: none;
+  			border: 1px solid #ddd;
+  			border-left-width: 0;
+		}
+		
+		.pagination .currentPage a {
+ 		 	color: #999999;
+  			cursor: default;
+		} 
+		
+		/*
+		.pagination {
+  			 margin: 0px 5px;
+		}
+		*/
+		
+    </style>
+        
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <div class="main">
+	    <div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+		      <img id="logoImg" src="{{t_static_host_url}}/static/images/PoweredByRWS.png"> </img>
+			  <div class="filter-div">
+				<div class="row-fluid">
+					<div class="span3" style="font-size:11px; line-height:20px;">
+						<b> Show: </b>
+					</div>
+					<div class="span9">
+						<div class="control-group">
+				            <div class="controls">
+				              <select id="filter-rooms" class="span10" style="font-size:10px; height:20px;">
+				                <option id="all">All Rooms</option>
+				                <option id="now">Available Now</option>
+				                <option id="all-asc">All Rooms A-Z</option>
+				                <option id="all-desc">All Rooms Z-A</option>
+				              </select>
+				            </div>
+				          </div>
+					</div>
+				</div>
+			  </div>
+	        </div>
+	      </div>
+	    </div>
+
+		<div class="wrapper">
+		    <div id="rooms" class="container">
+	
+		    </div> <!-- /container -->
+	    </div>
+	    	
+	</div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+        <!-- <script>
+            google.calendar.setRelay('http://jaguar1.redwoodsystems.com/static/html/rpc_relay.html');
+        </script> -->
+	<script src='{{t_static_host_url}}/static/js/gadget/jquery-1.8.0.min.js'></script>
+	<script src='{{t_static_host_url}}/static/js/gadget/jquery.color.js'></script>
+	<script src='{{t_static_host_url}}/static/js/gadget/jquery.idle-timer.js'></script>
+	<script src='{{t_static_host_url}}/static/js/gadget/bootstrap.js'></script>
+	<script src='{{t_static_host_url}}/static/js/gadget/quickpager.jquery.js'></script>
+	<script>
+		var pageG = pageG||{};
+		var pageG = {
+				reloadEvery: {{t_reload_every}}*1000,
+				idleTimeout: 1*60*1000,
+				idleColor: '#C5D8D9',
+				colorFadeTime: 1500,
+				locations: {},
+				roomStates: {},
+				currentPage:1,
+				pageSize:3,
+				default_up_down: "down",
+				//API_URL: "http://localhost:8000/reaper/api/rmstatus"
+				API_URL: "{{t_rm_status_api_url}}",
+				STATIC_HOST_URL: "{{t_static_host_url}}"
+		}
+		
+	</script>
+	<script>
+	var weAreGoForUpdates = 1;     // flag that the idle timer sets/unsets
+
+	String.prototype.ellipsize = 
+	    function(n){
+	        return this.substr(0,n-1)+(this.length>n?'&hellip;':'');
+	    };
+
+	jQuery(document).ready(function($) {
+	 
+		initialize();
+		
+	 $('#missYou').hide();  $('#messages').hide();
+
+	 
+	 $(document).bind("idle.idleTimer", function(){
+	    if (weAreGoForUpdates == 1) {   // we were active and have just flipped to idle
+	      weAreGoForUpdates = 0;
+	         $('.well').css('background-color', pageG.idleColor);
+	         //$('.room').animate({ backgroundColor: idleColor}, colorFadeTime);
+	         $('#missYou').show();
+	     }
+	 });
+
+	 $(document).bind("active.idleTimer", function(){
+	     if (weAreGoForUpdates == 0) {   // we were idle and just flipped to active
+	         weAreGoForUpdates = 1;
+	         updateLocationData();
+	         
+	         $('#missYou').hide();
+	     }
+	 });
+	 
+	 $.idleTimer(pageG.idleTimeout);   // start the idle timer
+
+	 $.ajaxSetup( {timeout: pageG.reloadEvery} );   // global timeout for api requests
+	 $.ajaxSetup( {async: false} );
+	 updateLocationData();                    // populate the location boxes
+	 $.ajaxSetup( {async: true} );
+
+	 setInterval( 'updateLocationData()', pageG.reloadEvery );  // lather rinse etc
+	 
+	 //For testing only
+	 //weAreGoForUpdates = 1;
+	 //updateLocationData();
+	});
+
+
+	function initialize(){
+		//Operations to be done on loading gadget
+		registerShowDetailsHandler();
+		registerMeetNowHandlerNew();
+		registerRoomFilterHandler();
+	}
+
+
+	function applyUpDownState(roomEl) {
+		
+		var roomId = roomEl.attr("id");
+		var colorState = pageG.roomStates[roomId]['color'];
+		var booked = pageG.roomStates[roomId]['booked'];
+		
+		if (pageG.roomStates[roomId]["up_down"] == "up") {
+			//collapse
+			if (colorState=="green"){
+				roomEl.find('div[detailType]').each(function(){
+					$(this).hide();
+				});
+			}
+			
+			if (colorState=="black" && !booked ){
+				roomEl.find('div[detailType]').each(function(){
+					$(this).hide();
+				});
+			}
+			
+			if (colorState=="black" && booked ){
+				roomEl.find('div[detailType]').each(function(){
+					if ($(this).attr('detailType') !="cancelIn"){
+						$(this).hide();
+					} 
+				});
+			}
+
+			if (colorState=="red"){
+				roomEl.find('div[detailType]').each(function(){
+					$(this).hide();
+				});
+				roomEl.find('hr').each(function(){
+					$(this).hide();
+				});
+			}
+			
+		} else {
+			//expand
+			roomEl.find('div[detailType]').each(function(){
+				$(this).show();
+			});
+			roomEl.find('hr').show();
+		}
+		
+	}
+
+
+	function registerShowDetailsHandler(){
+		//Toggle display of room occupancy details on clicking icon
+
+		$('#rooms').on('click', '[class*="cus-down-"]', function(){
+			//console.log("cus-down handler");
+			
+			var wellEl = $(this).parents(".well");
+			var roomId = wellEl.attr("id");
+			
+			var colorState = pageG.roomStates[roomId]['color'];
+			var booked = pageG.roomStates[roomId]['booked'];
+			
+			//set the correct state
+			pageG.roomStates[roomId]["up_down"] = ["up"];
+			
+			if ( $(this).hasClass("arr-down") ){
+				$(this).removeClass("arr-down").addClass("arr-up");
+			}
+			
+			if ( $(this).hasClass("cus-down-"+colorState) ){
+				$(this).removeClass("cus-down-"+colorState).addClass("cus-right-"+colorState);
+			}
+
+			//Collapse logic here
+			applyUpDownState(wellEl);
+			
+
+		});
+		
+		$('#rooms').on('click', '[class*="cus-right-"]', function(){
+			//console.log("cus-right handler");
+			
+			var wellEl = $(this).parents(".well");
+			var roomId = wellEl.attr("id");
+			
+			var colorState = pageG.roomStates[roomId]['color'];
+			var booked = pageG.roomStates[roomId]['booked'];
+			
+			pageG.roomStates[roomId]["up_down"] = ["down"];
+			
+			if ( $(this).hasClass("arr-up") ){
+				$(this).removeClass("arr-up").addClass("arr-down");			
+			}
+			
+			if ( $(this).hasClass("cus-right-"+colorState) ){
+				$(this).removeClass("cus-right-"+colorState).addClass("cus-down-"+colorState);			
+			}
+			
+			applyUpDownState(wellEl);
+
+		});
+
+	}
+
+
+	function registerMeetNowHandlerNew(){
+		
+		$('#rooms').on('click', '.meet-now > a', function(){
+			//console.log("meetnow handler");
+			var wellEl = $(this).parents(".well");
+			var roomId = wellEl.attr("id");
+			var colorState = wellEl.attr("color-state");
+			
+			//alert('meet-now clicked on room_id='+roomId+" color-state="+colorState);
+			roomId = parseInt(roomId);
+			openMeetNow(roomId);
+			e.preventDefault();
+
+		});
+		
+	}
+
+	function registerRoomFilterHandler(){
+		
+		$("#filter-rooms").on("change","",function(){
+			var sel = $("#filter-rooms option:selected").attr("id");
+			//console.log("filter handler");
+			//reset currentPage
+			pageG.currentPage=1;
+			updateLocationData();
+			//applyFilter(sel);
+			//reapply pager
+			//addPager();			
+		});
+	}
+	
+	function registerPageNavHandler(){
+		$(".simplePagerNav>li>a").on("click","",function(){
+			pageG.currentPage = parseInt($(this).attr('rel'));
+			//console.log("page handler="+currentPage);
+			//$('.currentPage').addClass('active');
+		});
+	}
+	
+	function applyFilter(sel){
+		
+		$('.well').each(function(){
+			var roomId = $(this).attr('id');
+			if (shouldDisplay(sel, roomId)){
+				$(this).parent().parent().show();
+			} else {
+				$(this).parent().parent().hide();
+			}
+		});
+	}
+	
+	function shouldDisplay(sel, roomId){
+		var ret = false;
+		var state = pageG.roomStates[roomId];
+		
+		if (sel == "now"){
+			if (state["color"]=="green") {
+				ret = true;
+			} else if (state["color"]=="black") {
+				if (state["booked"]==false){
+					ret = true;
+				}
+			} else {
+				ret = false;
+			}
+		} else {
+			ret = true;
+		}
+		return ret;
+	}
+	
+
+	function updateLocationData() {
+
+	 if (weAreGoForUpdates) {
+	 	//console.log("calling api");
+	 	//var url="https://jaguar1.redwoodsystems.com/reaper/reaper/api/rmstatus";
+	 	//var url="https://ec2-184-169-137-91.us-west-1.compute.amazonaws.com/reaper/reaper/api/rmstatus";
+	 	//var url="http://localhost:8000/reaper/api/rmstatus";
+	 	var url=pageG.API_URL;
+	 	
+	 	$.getJSON(url+"?callback=?",null,
+	 			function(data){
+	 				//console.log("api returned");
+	 				processLocationData(data);
+	 				//readd handlers
+	 				registerMeetNowHandlerNew();
+	 				registerShowDetailsHandler();
+	 			}
+	 	);
+
+	 }
+
+	}
+
+	function openMeetNow(roomId){
+		////console.log("in openMeetNow ...");
+		//Needs the following line to be added to the gadget xml
+		//<Require feature="google.calendar-0.5"/>	
+		//console.log("in openMeetNow "+roomId);
+		
+		var loc = pageG.locations[roomId];
+		if (!loc){
+			return;
+		}
+
+		var d = new Date();
+		var minu = d.getMinutes();
+		var hr = d.getHours();
+		   
+		var to_dt = new Date(d);
+		to_dt.setMinutes(d.getMinutes() + 30);
+	      
+		if (loc.avail_until != null){
+			//if avail_until - d < 30 mins, to_dt = avail_until
+			var avdt = new Date(loc.avail_until);
+			var diff = avdt - d;
+			if (diff < 1000*60*30){
+				to_dt = avdt;
+			}
+		}
+
+		  var eventData = {
+				    title: 'Meeting',
+				    details: 'Meeting',
+				    location: ''+loc.room.name,
+				    startTime: {year: d.getFullYear(), month: d.getMonth()+1, date: d.getDate(), hour:d.getHours() , minute:d.getMinutes(), second:0},
+				    endTime: {year: to_dt.getFullYear(), month: to_dt.getMonth()+1, date: to_dt.getDate(), hour: to_dt.getHours(), minute:to_dt.getMinutes(), second:0},
+		
+				    // Note that attendees MUST be sent in contact format.
+				    attendees: [
+				      {email: ''+loc.room.g_calendar_id}
+				    ]
+				  };
+		 //console.log("eventData="+eventData.location);
+		 google.calendar.composeEvent(eventData);
+			
+	}
+	
+	function sortByNameAscComparator(a, b){
+		  var aName = a.room.name.toLowerCase();
+		  var bName = b.room.name.toLowerCase(); 
+		  return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+	}
+
+	function sortByNameDescComparator(a, b){
+		  var aName = a.room.name.toLowerCase();
+		  var bName = b.room.name.toLowerCase(); 
+		  return ((aName > bName) ? -1 : ((aName < bName) ? 1 : 0));
+	}
+
+
+	function processLocationData(apiModel) {
+
+	 if (weAreGoForUpdates) {    	
+	 	////console.log("apiModel="+apiModel);
+		//clear existing values
+		pageG.locations = {};
+		
+		var allExistingIds = [];
+		var allDisplayedIds = [];
+		
+		allExistingIds = $("#rooms").find(".well").map(function(){
+			return $(this).attr("id");
+		});
+		
+		//load room states first for we can sort on them later
+		// needs extra loop on apiModel
+		for (lc in apiModel){
+			var loc = apiModel[lc];
+			//load room states
+			loadRoomStates(loc);
+		}
+		
+		var sel = $("#filter-rooms option:selected").attr("id");
+		//sort based on filter/sort selection
+		if (sel=="all" || sel=="now"){
+			//default
+			apiModel.sort(function(a,b){
+				//sort by green, gray, red
+				var aSort = pageG.roomStates[a.room.id]['defaultSort'];
+				var bSort = pageG.roomStates[b.room.id]['defaultSort'];
+				if (aSort == bSort){
+					return (sortByNameAscComparator(a,b));
+				}
+				return (aSort - bSort);
+			});
+		} else if (sel=="all-asc"){
+			//default
+			apiModel.sort(sortByNameAscComparator);
+		} else if (sel=="all-desc"){
+			//default
+			apiModel.sort(sortByNameDescComparator);
+		} else {
+			//
+		}
+		
+		//delete all existing rows because of sorting
+		//causes all rooms to be readded
+		$('#rooms').empty();
+		allExistingIds=[];
+		
+
+	 	for (lc in apiModel){
+	 		var loc = apiModel[lc];
+	 		//console.log("loc="+loc+" room name="+loc.room.name);
+	 		
+	 		//update avail_until to null if it is not until the next day
+	 		if (loc.avail_until != null){
+	 			var avdt = new Date(loc.avail_until);
+	 			var currdt = new Date();
+	 			if (avdt.getDate() > currdt.getDate()){
+	 				loc.avail_until = null;
+	 			}
+	 		}
+	 		
+
+	 		//store location data in map
+	 		pageG.locations[loc.room.id] = loc;
+	 		
+	 		if (loc.room.motion_enabled && shouldDisplay(sel,loc.room.id)) {
+	 	 		if ($.inArray(""+loc.room.id,allExistingIds) >-1){
+	 	 			//replace existing room
+	 	 		} else {
+	 	 			//found new room not already on page
+	 	 			//create scaffolding
+	 	 			var st = '<div class="row-fluid">'
+	 	 			     +'<div class="span12">'
+	 	 			     +'<div id="'+loc.room.id+'" class="well" color-state="" booked-state="">'
+	 	 			     +'</div></div></div>';
+	 	 			$("#rooms").append(st);
+	 	 		}
+	 	 		fillRoom(loc);
+	 		} else {
+	 			//remove room and scaffolding from page if it exists
+	 			if ($.inArray(""+loc.room.id,allExistingIds) >-1){
+	 				//$("#"+loc.room.id).remove();
+	 				$("#"+loc.room.id).parent().parent().remove();
+	 			}
+	 		}
+	 		
+	 	}
+	 	
+	 	//apply filter again because colors may have changed
+	 	//applyFilter(sel);
+	 	//$("#filter-rooms").change();
+
+	 	//pager
+		addPager();
+	 	
+		//apply tooltips
+		applyToolTips();
+		
+		//gadgets.window.adjustHeight();
+	 }
+
+	}
+	
+	function addPager(){
+		//remove existing pager if present
+		var pagerFound = $("#rooms").parent('div[class="simplePagerContainer"]').length;
+		if (pagerFound > 0){
+			var roomsEl = $("#rooms");
+			var pagerEl = roomsEl.parent('div[class="simplePagerContainer"]');
+			var wrapper = pagerEl.parent();
+			if (pagerEl.length > 0){
+				//remove pages
+				roomsEl.children().each(function(){
+					$(this).removeClass (function (index, css) {
+					    return (css.match (/simplePagerPage[0-9]+/g) || []).join(' ');
+					});
+				});
+				pagerEl.remove();
+				wrapper.append(roomsEl)
+			}
+		}
+		//add pager
+		$("#rooms").quickPager({
+			pageSize:pageG.pageSize,
+			currentPage:pageG.currentPage,
+			pagerLocation:"after"
+		});
+		//$(".currentPage").addClass('active');
+		registerPageNavHandler();
+	}
+
+
+	function appendMeetNow(container) {
+		
+		if (container.find(".meet-now-container").length == 0) {
+			var st = '<div class="meet-now-container room-data-row">'
+				 +'<span class="meet-now"><a href="#">Meet Now</a></span>'
+				 +'</div>';
+			
+			container.append(st);
+		}
+		return container;
+	}
+
+	function appendOccupancy(container, pct){
+
+		container.find(".occ-container").remove();
+		if (container.find(".occ-container").length == 0) {
+			var st = '<div class="occ-container room-data-row" detailType="occPct">'
+				 +'<span class="room-data-left">Occupancy</span> <span class="room-data-right">'+pct+"% Full"+'</span>'
+				 +'</div>'
+			
+			container.append(st);
+		}
+		return container;
+	}
+
+	function appendAvailabilityUntil(container, tm){
+		
+		container.find(".avail-container").remove();
+		if (container.find(".avail-container").length == 0) {
+			var st = '<div class="avail-container room-data-row" detailType="availUntil">'
+				 +'<span class="room-data-left">Available until</span> <span class="room-data-right">'+tm+'</span>'
+				 +'</div>'
+			
+			container.append(st);
+		}
+		return container;
+	}
+
+	function appendCancellationIn(container, tm){
+		container.find(".cancel-container").remove();
+		if (container.find(".cancel-container").length == 0) {
+			var st = '<div class="cancel-container room-data-row" detailType="cancelIn">'
+				 +'<span class="room-data-left">Cancellation in</span> <span class="room-data-right">'+tm+'</span>'
+				 +'</div>'
+			
+			container.append(st);
+		}
+		return container;
+	}
+
+	function appendBookedUntil(container, tm){
+		container.find(".booked-container").remove();
+		if (container.find(".booked-container").length == 0) {
+			var st = '<div class="booked-container room-data-row" detailType="bookedUntil">'
+				 +'<span class="room-data-left">Booked until</span> <span class="room-data-right">'+tm+'</span>'
+				 +'</div>'
+			
+			container.append(st);
+		}
+		return container;
+	}
+
+	function appendRoomHeader(container, roomName){
+		
+		if (container.find(".room-hdr").length == 0) {
+			var st = '<div class="room-hdr room-data-row">'
+				+'<span class="room-data-left room-title" t='+roomName+'>'+roomName.ellipsize(10)+'</span>' 
+				+'<span class="room-data-right">'
+				+'<i class="ic1"></i>&nbsp;'
+				+'<i class="ic2"></i>&nbsp;'
+				+'<i class="ic3"></i>'
+				+'</span>'
+				+'</div>'
+				+'<hr/>';
+			
+			container.append(st);
+		}
+		return container;
+	}
+
+	function clearWellClass(roomEl){
+		roomEl.removeClass (function (index, css) {
+		    return (css.match (/well-\S+/g) || []).join(' ');
+		});
+		return roomEl
+	}
+
+	function clearIconClass(iconEl){
+		iconEl.removeClass(function(index,css){
+			return (css.match (/cus-\S+/g) || []).join(' ');
+		});
+		return iconEl;
+	}
+
+	function clearAllIconStates(roomEl){
+		roomEl.find('i').each(function(){
+			$(this).removeClass(function(index,css){
+				return (css.match (/cus-\S+/g) || []).join(' ');
+			});
+		})
+	}
+
+
+	function loadRoomStates(loc){
+		
+		//console.log("loadRoomStates - loc="+loc.room.id+" "+loc.room.name);
+		
+		if (!(loc.room.id in pageG.roomStates)) {
+			pageG.roomStates[loc.room.id]= {};
+			//only modify up_down state if this is a new room or loading for the first time
+			//default - up
+			pageG.roomStates[loc.room.id] = {'up_down':pageG.default_up_down};
+			//console.log('state of '+loc.room.id+': '+pageG.roomStates[loc.room.id]);
+		}
+		
+		if (!loc.occupied && !loc.reserved){
+			pageG.roomStates[loc.room.id]['color'] = "green";
+			pageG.roomStates[loc.room.id]['paintMeetNow'] = true;
+			pageG.roomStates[loc.room.id]['paintOcc'] = true;
+			pageG.roomStates[loc.room.id]['paintAvailUntil'] = true;
+			pageG.roomStates[loc.room.id]['paintCancelIn'] = false;
+			pageG.roomStates[loc.room.id]['paintBookedUntil'] = false;
+			pageG.roomStates[loc.room.id]['booked'] = false;
+			pageG.roomStates[loc.room.id]['occupied'] = false;
+			pageG.roomStates[loc.room.id]['defaultSort'] = 1;
+		}
+		
+		if (loc.occupied && !loc.reserved){
+			pageG.roomStates[loc.room.id]['color'] = "black";
+			pageG.roomStates[loc.room.id]['paintMeetNow'] = true;
+			pageG.roomStates[loc.room.id]['paintOcc'] = true;
+			pageG.roomStates[loc.room.id]['paintAvailUntil'] = true;
+			pageG.roomStates[loc.room.id]['paintCancelIn'] = false;
+			pageG.roomStates[loc.room.id]['paintBookedUntil'] = false;
+			pageG.roomStates[loc.room.id]['booked'] = false;
+			pageG.roomStates[loc.room.id]['occupied'] = true;
+			pageG.roomStates[loc.room.id]['defaultSort'] = 2;
+
+		}
+		
+		if (!loc.occupied && loc.reserved){
+			pageG.roomStates[loc.room.id]['color'] = "black";
+			pageG.roomStates[loc.room.id]['paintMeetNow'] = false;
+			pageG.roomStates[loc.room.id]['paintOcc'] = true;
+			pageG.roomStates[loc.room.id]['paintAvailUntil'] = false;
+			pageG.roomStates[loc.room.id]['paintCancelIn'] = true;
+			pageG.roomStates[loc.room.id]['paintBookedUntil'] = true;
+			pageG.roomStates[loc.room.id]['booked'] = true;
+			pageG.roomStates[loc.room.id]['occupied'] = false;
+			pageG.roomStates[loc.room.id]['defaultSort'] = 3;
+		}
+		
+		if (loc.occupied && loc.reserved){
+			pageG.roomStates[loc.room.id]['color'] = "red";
+			pageG.roomStates[loc.room.id]['paintMeetNow'] = false;
+			pageG.roomStates[loc.room.id]['paintOcc'] = true;
+			pageG.roomStates[loc.room.id]['paintAvailUntil'] = false;
+			pageG.roomStates[loc.room.id]['paintCancelIn'] = false;
+			pageG.roomStates[loc.room.id]['paintBookedUntil'] = true;
+			pageG.roomStates[loc.room.id]['booked'] = true;
+			pageG.roomStates[loc.room.id]['occupied'] = true;
+			pageG.roomStates[loc.room.id]['defaultSort'] = 4;
+		}
+
+		
+	}
+
+	function applyToolTips(){
+		$('i[class*="cus-unbooked"]').tooltip({title:'Unbooked', placement:'bottom'});
+		$('i[class*="cus-booked"]').tooltip({title:'Booked', placement:'bottom'});
+		$('i[class*="cus-hollow"]').tooltip({title:'Unoccupied', placement:'bottom'});
+		$('i[class*="cus-solid"]').tooltip({title:'Occupied', placement:'bottom'});
+		//$('i[class*="cus-right"]').tooltip({title:'Expand / Collapse', placement:'bottom'});
+		//$('i[class*="cus-down"]').tooltip({title:'Expand / Collapse', placement:'bottom'});
+		//only apply tooltips to ellipsized titles
+		$('.room-title').each(function(){
+			if ($(this).text().length != $(this).attr('t').length){
+				$(this).tooltip({title:$(this).attr('t'), placement:'bottom'});
+			}
+		});
+	}
+
+
+	function fillRoom(loc){
+		//create room content
+		//assumes a well is already in place.
+		//console.log("room="+loc.room.name+" occ="+loc.occupied+" rsv="+loc.reserved+" reap="+loc.time_to_reap );
+		//console.log("room="+locations[loc.room.id]);
+		
+		var roomEl = $("#"+loc.room.id);
+		
+		if (!roomEl.hasClass("well")){
+			return;
+		}
+		
+		//empty room well - note this removes event handlers too
+		roomEl.empty();
+		clearWellClass(roomEl);
+		
+		//well should be empty and clean of earlier states at this point
+		//load room states
+		//loadRoomStates(loc)
+		
+		//console.log("room="+loc.room.name+" color="+ pageG.roomStates[loc.room.id]['color']);
+
+		var color = pageG.roomStates[loc.room.id]['color'] ;
+		
+		roomEl.addClass("well-"+color);
+		roomEl.attr("color-state",color);
+		
+		//required for the filter handler
+		if (pageG.roomStates[loc.room.id]['booked']) {
+			roomEl.attr("booked-state","booked");
+		}else {
+			roomEl.attr("booked-state","unbooked");
+		}
+		
+		//append room header
+		roomEl = appendRoomHeader(roomEl,loc.room.name);
+		
+		//set icons
+		icon1 = roomEl.find(".ic1");
+		if (pageG.roomStates[loc.room.id]['booked']){
+			icon1.addClass('cus-booked-'+color);
+		} else {
+			icon1.addClass('cus-unbooked-'+color);
+		}
+
+		icon2 = roomEl.find(".ic2");
+		if (pageG.roomStates[loc.room.id]['occupied']){
+			icon2.addClass('cus-solid-user-'+color);
+		} else {
+			icon2.addClass('cus-hollow-user-'+color);
+		}
+		
+		icon3 = roomEl.find(".ic3");
+		if (pageG.roomStates[loc.room.id]['up_down'] == "up"){
+			icon3.addClass('arr-up cus-right-'+color);	
+		} else {
+			icon3.addClass('arr-down cus-down-'+color);	
+		}
+		
+		//append meet now link
+		if (pageG.roomStates[loc.room.id]['paintMeetNow']){
+			roomEl = appendMeetNow(roomEl);
+		}
+		
+		if (pageG.roomStates[loc.room.id]['paintCancelIn']){
+			roomEl = appendCancellationIn(roomEl, format_time(loc.time_to_reap));
+		}
+		
+		if (pageG.roomStates[loc.room.id]['paintOcc']){
+			roomEl = appendOccupancy(roomEl,loc.occupancy_pct);
+		}
+		
+		if (pageG.roomStates[loc.room.id]['paintBookedUntil']){
+			if (loc.booked_until != null){
+				roomEl = appendBookedUntil(roomEl, format_booked_date(loc.booked_until));
+			}else {
+				roomEl = appendBookedUntil(roomEl, '');
+			}
+		}
+		
+		if (pageG.roomStates[loc.room.id]['paintAvailUntil']){
+			if (loc.avail_until != null){
+				roomEl = appendAvailabilityUntil(roomEl, format_booked_date(loc.avail_until));
+			}else {
+				roomEl = appendAvailabilityUntil(roomEl, '');
+			}
+		}
+
+		//reapply up/down state
+		applyUpDownState(roomEl);
+		
+	}
+
+
+	function format_time(secs){
+		t = secs;
+		var h = Math.floor(t/3600);
+		var t = t%3600;
+	    var m = Math.floor(t / 60);
+	    var s = Math.floor(t % 60);
+		
+	    var st = ((h > 0 ? h + 'h ' : '') +
+	            (m > 0 ? m + 'm ' : '') +
+	            s + 's');
+	    
+	    return st;
+	}
+
+	function format_booked_date(dt_str){
+		var d = new Date(dt_str);
+		//var str = d.getHours()+":"+d.getMinutes();
+		var h = d.getHours();
+		var t = d.getMinutes();
+		var ampm;
+		if (h > 12) {
+			h = d.getHours() - 12;
+			t = t<10?"0"+t:""+t;
+			ampm = "p";
+		} else if (h == 12) {
+			h = "12";
+			t = "00"
+			ampm = "p";
+		} else {
+			t = t<10?"0"+t:""+t;
+			ampm = "a"
+		}
+		
+		str = h+":"+t+ampm;
+		return str;
+	}
+	</script>
+
+
+</body></html>
